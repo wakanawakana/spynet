@@ -6,4 +6,4 @@ This code is based on the paper [Optical Flow Estimation using a Spatial Pyramid
 ## how to run
 - install torch for windows https://github.com/BTNC/distro-win
 - build
-- see anuragranj/spynet $ run_spynet.lua
+- see anuragranj/spynet and run_spynet.lua
