@@ -218,11 +218,11 @@ local function setup(width, height, opt)
   elseif len <= 512 then
     computeFlow = computeInitFlowL5
     level = 5
-  elseif len <= 1472 then
+  elseif len <= 1024 then
     computeFlow = computeInitFlowL6
     level = 6
   else
-    error("Only image size <= 1472 supported. Next release will have full support.")
+    error("Only image size <= 1024 supported. Next release will have full support.")
   end
 
   if opt=="sintelFinal" then
@@ -272,7 +272,7 @@ local function setup(width, height, opt)
 
 
   if level>0 then
-    modelL1 = torch.load(modelL1path)
+    modelL1 = torch.load(modelL1path, 'b64')
     if torch.type(modelL1) == 'nn.DataParallelTable' then
        modelL1 = modelL1:get(1)
     end
@@ -280,7 +280,7 @@ local function setup(width, height, opt)
   end
 
   if level>1 then
-    modelL2 = torch.load(modelL2path)
+    modelL2 = torch.load(modelL2path, 'b64')
     if torch.type(modelL2) == 'nn.DataParallelTable' then
        modelL2 = modelL2:get(1)
     end
@@ -288,7 +288,7 @@ local function setup(width, height, opt)
   end
 
   if level>2 then
-    modelL3 = torch.load(modelL3path)
+    modelL3 = torch.load(modelL3path, 'b64')
     if torch.type(modelL3) == 'nn.DataParallelTable' then
        modelL3 = modelL3:get(1)
     end
@@ -296,7 +296,7 @@ local function setup(width, height, opt)
   end
 
   if level>3 then
-    modelL4 = torch.load(modelL4path)
+    modelL4 = torch.load(modelL4path, 'b64')
     if torch.type(modelL4) == 'nn.DataParallelTable' then
       modelL4 = modelL4:get(1)
     end
@@ -304,7 +304,7 @@ local function setup(width, height, opt)
   end
 
   if level>4 then
-    modelL5 = torch.load(modelL5path)
+    modelL5 = torch.load(modelL5path, 'b64')
     if torch.type(modelL5) == 'nn.DataParallelTable' then
       modelL5 = modelL5:get(1)
     end
@@ -312,7 +312,7 @@ local function setup(width, height, opt)
   end
 
   if level>5 then
-    modelL6 = torch.load(modelL6path)
+    modelL6 = torch.load(modelL6path, 'b64')
     if torch.type(modelL6) == 'nn.DataParallelTable' then
       modelL6 = modelL6:get(1)
     end
@@ -361,7 +361,7 @@ local easyComputeFlow = function(im1, im2)
   end  
        
   imgs = image.scale(imgs, fineWidth, fineHeight)
-
+  print (fineWidth)
   local len = math.max(fineWidth, fineHeight)
   local computeFlow
   
@@ -389,85 +389,45 @@ local easyComputeFlow = function(im1, im2)
 
 end
 
-local function easy_setup(opt)
-  opt = opt or 'sintelFinal'
+local function easy_setup()
+  modelL1path = paths.concat('models', 'modelL1_F.t7')
+  modelL2path = paths.concat('models', 'modelL2_F.t7')
+  modelL3path = paths.concat('models', 'modelL3_F.t7')
+  modelL4path = paths.concat('models', 'modelL4_F.t7')
+  modelL5path = paths.concat('models', 'modelL5_F.t7')
+  modelL6path = paths.concat('models', 'modelL6_F.t7')
 
-  if opt=="sintelFinal" then
-    modelL1path = paths.concat('models', 'modelL1_F.t7')
-    modelL2path = paths.concat('models', 'modelL2_F.t7')
-    modelL3path = paths.concat('models', 'modelL3_F.t7')
-    modelL4path = paths.concat('models', 'modelL4_F.t7')
-    modelL5path = paths.concat('models', 'modelL5_F.t7')
-    modelL6path = paths.concat('models', 'modelL6_F.t7')
-  end
-
-  if opt=="sintelClean" then
-    modelL1path = paths.concat('models', 'modelL1_C.t7')
-    modelL2path = paths.concat('models', 'modelL2_C.t7')
-    modelL3path = paths.concat('models', 'modelL3_C.t7')
-    modelL4path = paths.concat('models', 'modelL4_C.t7')
-    modelL5path = paths.concat('models', 'modelL5_C.t7')
-    modelL6path = paths.concat('models', 'modelL6_C.t7')
-  end
-
-  if opt=="chairsClean" then
-    modelL1path = paths.concat('models', 'modelL1_4.t7')
-    modelL2path = paths.concat('models', 'modelL2_4.t7')
-    modelL3path = paths.concat('models', 'modelL3_4.t7')
-    modelL4path = paths.concat('models', 'modelL4_4.t7')
-    modelL5path = paths.concat('models', 'modelL5_4.t7')
-    modelL6path = paths.concat('models', 'modelL5_4.t7')
-  end
-
-  if opt=="chairsFinal" then
-    modelL1path = paths.concat('models', 'modelL1_3.t7')
-    modelL2path = paths.concat('models', 'modelL2_3.t7')
-    modelL3path = paths.concat('models', 'modelL3_3.t7')
-    modelL4path = paths.concat('models', 'modelL4_3.t7')
-    modelL5path = paths.concat('models', 'modelL5_3.t7')
-    modelL6path = paths.concat('models', 'modelL5_3.t7')
-  end
-
-  if opt=="kittiFinal" then
-    modelL1path = paths.concat('models', 'modelL1_K.t7')
-    modelL2path = paths.concat('models', 'modelL2_K.t7')
-    modelL3path = paths.concat('models', 'modelL3_K.t7')
-    modelL4path = paths.concat('models', 'modelL4_K.t7')
-    modelL5path = paths.concat('models', 'modelL5_K.t7')
-    modelL6path = paths.concat('models', 'modelL6_K.t7')
-  end
-  
-  modelL1 = torch.load(modelL1path)
+  modelL1 = torch.load(modelL1path, 'b64')
   if torch.type(modelL1) == 'nn.DataParallelTable' then
      modelL1 = modelL1:get(1)
   end
   modelL1:evaluate()
 
-  modelL2 = torch.load(modelL2path)
+  modelL2 = torch.load(modelL2path, 'b64')
   if torch.type(modelL2) == 'nn.DataParallelTable' then
      modelL2 = modelL2:get(1)
   end
   modelL2:evaluate()
 
-  modelL3 = torch.load(modelL3path)
+  modelL3 = torch.load(modelL3path, 'b64')
   if torch.type(modelL3) == 'nn.DataParallelTable' then
      modelL3 = modelL3:get(1)
   end
   modelL3:evaluate()
 
-  modelL4 = torch.load(modelL4path)
+  modelL4 = torch.load(modelL4path, 'b64')
   if torch.type(modelL4) == 'nn.DataParallelTable' then
     modelL4 = modelL4:get(1)
   end
   modelL4:evaluate()
 
-  modelL5 = torch.load(modelL5path)
+  modelL5 = torch.load(modelL5path, 'b64')
   if torch.type(modelL5) == 'nn.DataParallelTable' then
     modelL5 = modelL5:get(1)
   end
   modelL5:evaluate()
 
-  modelL6 = torch.load(modelL6path)
+  modelL6 = torch.load(modelL6path, 'b64')
   if torch.type(modelL6) == 'nn.DataParallelTable' then
     modelL6 = modelL6:get(1)
   end
