@@ -10,3 +10,4 @@ This code is based on the paper [Optical Flow Estimation using a Spatial Pyramid
 
 ## My Environment
 - win7 64bit JP
+- Nvidia GeForce GTX750 Ti with CUDA4.2～8.0
