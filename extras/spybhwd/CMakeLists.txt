@@ -47,19 +47,18 @@ LINK_DIRECTORIES("${Torch_INSTALL_LIB}")
 SET(src init.c)
 FILE(GLOB luasrc *.lua)
 ADD_TORCH_PACKAGE(spy "${src}" "${luasrc}")
-TARGET_LINK_LIBRARIES(spy luaT TH)
+TARGET_LINK_LIBRARIES(spy luaT TH Lua51)
 
 
 FIND_PACKAGE(CUDA 5.5)
 
 IF (CUDA_FOUND)
   LIST(APPEND CUDA_NVCC_FLAGS "-arch=sm_20")
-  LIST(APPEND CUDA_NVCC_FLAGS "-Xcompiler -std=c++98")
 
   INCLUDE_DIRECTORIES("${Torch_INSTALL_INCLUDE}/THC")
   SET(src-cuda init.cu)
   CUDA_ADD_LIBRARY(cuspy MODULE ${src-cuda})
-  TARGET_LINK_LIBRARIES(cuspy luaT THC TH)
+  TARGET_LINK_LIBRARIES(cuspy luaT THC TH Lua51)
   IF(APPLE)
     SET_TARGET_PROPERTIES(cuspy PROPERTIES
       LINK_FLAGS "-undefined dynamic_lookup")
